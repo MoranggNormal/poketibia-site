@@ -34,7 +34,7 @@ model account_bans {
 }
 
 model account_viplist {
-  account_id  Int @id
+  account_id  Int      @id
   player_id   Int
   description String   @default("") @db.VarChar(128)
   icon        Int      @default(0) @db.UnsignedTinyInt
@@ -54,7 +54,7 @@ model accounts {
   type                Int                   @default(1)
   premdays            Int                   @default(0)
   lastday             Int                   @default(0) @db.UnsignedInt
-  email               String                @default("") @db.VarChar(255)
+  email               String                @unique @default("") @db.VarChar(255)
   creation            Int                   @default(0)
   account_ban_history account_ban_history[]
   account_bans        account_bans?
@@ -97,16 +97,15 @@ model guild_ranks {
 }
 
 model guild_wars {
-  id               Int               @id @default(autoincrement())
-  guild1           Int               @default(0)
-  guild2           Int               @default(0)
-  name1            String            @db.VarChar(255)
-  name2            String            @db.VarChar(255)
-  status           Int               @default(0) @db.TinyInt
-  started          BigInt            @default(0)
-  ended            BigInt            @default(0)
-  guildwar_kills   guildwar_kills[]
-  znote_guild_wars znote_guild_wars?
+  id             Int              @id @default(autoincrement())
+  guild1         Int              @default(0)
+  guild2         Int              @default(0)
+  name1          String           @db.VarChar(255)
+  name2          String           @db.VarChar(255)
+  status         Int              @default(0) @db.TinyInt
+  started        BigInt           @default(0)
+  ended          BigInt           @default(0)
+  guildwar_kills guildwar_kills[]
 
   @@index([guild1], map: "guild1")
   @@index([guild2], map: "guild2")
@@ -139,13 +138,13 @@ model guildwar_kills {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model house_lists {
-  house_id Int @id
+  id       Int    @id @default(autoincrement())
+  house_id Int
   listid   Int
   list     String @db.Text
   houses   houses @relation(fields: [house_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "house_lists_ibfk_1")
 
   @@index([house_id], map: "house_id")
-  @@ignore
 }
 
 model houses {
@@ -213,7 +212,8 @@ model market_offers {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model player_deaths {
-  player_id              Int     @id
+  id                     Int     @id @default(autoincrement())
+  player_id              Int
   time                   BigInt  @default(0) @db.UnsignedBigInt
   level                  Int     @default(1)
   killed_by              String  @db.VarChar(255)
@@ -227,11 +227,10 @@ model player_deaths {
   @@index([killed_by], map: "killed_by")
   @@index([mostdamage_by], map: "mostdamage_by")
   @@index([player_id], map: "player_id")
-  @@ignore
 }
 
 model player_depotitems {
-  player_id  Int    @id
+  player_id  Int     @id
   sid        Int
   pid        Int     @default(0)
   itemtype   Int     @db.MediumInt
@@ -243,7 +242,7 @@ model player_depotitems {
 }
 
 model player_inboxitems {
-  player_id  Int    @id
+  player_id  Int     @id
   sid        Int
   pid        Int     @default(0)
   itemtype   Int     @db.MediumInt
@@ -254,19 +253,18 @@ model player_inboxitems {
   @@unique([player_id, sid], map: "player_id_2")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model player_items {
-  player_id  Int     @default(0) @id
+  id         Int     @id @default(autoincrement())
+  player_id  Int     @default(0)
   pid        Int     @default(0)
   sid        Int     @default(0)
-  itemtype   Int     @default(0) @db.MediumInt
+  itemtype   Int     @default(0) @db.UnsignedSmallInt
   count      Int     @default(0) @db.SmallInt
   attributes Bytes   @db.Blob
   players    players @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "player_items_ibfk_1")
 
   @@index([player_id], map: "player_id")
   @@index([sid], map: "sid")
-  @@ignore
 }
 
 model player_namelocks {
@@ -280,14 +278,13 @@ model player_namelocks {
   @@index([namelocked_by], map: "namelocked_by")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model player_spells {
-  player_id Int     @id
+  id        Int     @id @default(autoincrement())
+  player_id Int
   name      String  @db.VarChar(255)
   players   players @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "player_spells_ibfk_1")
 
   @@index([player_id], map: "player_id")
-  @@ignore
 }
 
 model player_storage {
@@ -324,7 +321,7 @@ model players {
   posx                                                     Int                   @default(5)
   posy                                                     Int                   @default(5)
   posz                                                     Int                   @default(2)
-  conditions                                               Bytes                 @db.Blob @default("")
+  conditions                                               Bytes                 @default("") @db.Blob
   cap                                                      Int                   @default(6)
   sex                                                      Int                   @default(1)
   lastlogin                                                BigInt                @default(0) @db.UnsignedBigInt
@@ -386,235 +383,11 @@ model server_config {
   value  String @default("") @db.VarChar(256)
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model tile_store {
-  house_id Int @id
+  id       Int    @id @default(autoincrement())
+  house_id Int
   data     Bytes
   houses   houses @relation(fields: [house_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "tile_store_ibfk_1")
 
   @@index([house_id], map: "house_id")
-  @@ignore
-}
-
-model znote {
-  id        Int    @id @default(autoincrement())
-  version   String @db.VarChar(30)
-  installed Int
-  cached    Int?
-}
-
-model znote_accounts {
-  id         Int     @id @default(autoincrement())
-  account_id Int
-  ip         Int     @db.UnsignedInt
-  created    Int
-  points     Int?    @default(0)
-  cooldown   Int?    @default(0)
-  active     Int     @default(0) @db.TinyInt
-  activekey  Int     @default(0)
-  flag       String  @db.VarChar(20)
-  secret     String? @db.Char(16)
-}
-
-model znote_changelog {
-  id        Int    @id @default(autoincrement())
-  text      String @db.VarChar(255)
-  time      Int
-  report_id Int
-  status    Int    @default(0) @db.TinyInt
-}
-
-model znote_deleted_characters {
-  id                  Int      @id @default(autoincrement())
-  original_account_id Int
-  character_name      String   @db.VarChar(255)
-  time                DateTime @db.DateTime(0)
-  done                Boolean
-}
-
-model znote_forum {
-  id       Int    @id @default(autoincrement())
-  name     String @db.VarChar(50)
-  access   Int    @db.TinyInt
-  closed   Int    @db.TinyInt
-  hidden   Int    @db.TinyInt
-  guild_id Int
-}
-
-model znote_forum_posts {
-  id          Int    @id @default(autoincrement())
-  thread_id   Int
-  player_id   Int
-  player_name String @db.VarChar(50)
-  text        String @db.Text
-  created     Int
-  updated     Int
-}
-
-model znote_forum_threads {
-  id          Int    @id @default(autoincrement())
-  forum_id    Int
-  player_id   Int
-  player_name String @db.VarChar(50)
-  title       String @db.VarChar(50)
-  text        String @db.Text
-  created     Int
-  updated     Int
-  sticky      Int    @db.TinyInt
-  hidden      Int    @db.TinyInt
-  closed      Int    @db.TinyInt
-}
-
-model znote_global_storage {
-  key   String @unique(map: "key") @db.VarChar(32) @id
-  value String @db.Text
-}
-
-model znote_guild_wars {
-  id         Int        @id @default(autoincrement())
-  limit      Int        @default(0)
-  guild_wars guild_wars @relation(fields: [id], references: [id], onDelete: Cascade, map: "znote_guild_wars_ibfk_1")
-}
-
-model znote_images {
-  id         Int    @id @default(autoincrement())
-  title      String @db.VarChar(30)
-  desc       String @db.Text
-  date       Int
-  status     Int
-  image      String @db.VarChar(30)
-  account_id Int
-}
-
-model znote_news {
-  id    Int    @id @default(autoincrement())
-  title String @db.VarChar(30)
-  text  String @db.Text
-  date  Int
-  pid   Int
-}
-
-model znote_pagseguro {
-  id             Int     @id @default(autoincrement())
-  transaction    String  @db.VarChar(36)
-  account        Int
-  price          Decimal @db.Decimal(11, 2)
-  points         Int
-  payment_status Boolean
-  completed      Int     @db.TinyInt
-
-  @@index([account], map: "account")
-}
-
-model znote_pagseguro_notifications {
-  id                Int       @id @default(autoincrement())
-  notification_code String    @db.VarChar(40)
-  details           String    @db.Text
-  receive_at        DateTime? @default(now()) @db.Timestamp(0)
-}
-
-model znote_paygol {
-  id         Int    @id @default(autoincrement())
-  account_id Int
-  price      Int
-  points     Int
-  message_id String @db.VarChar(255)
-  service_id String @db.VarChar(255)
-  shortcode  String @db.VarChar(255)
-  keyword    String @db.VarChar(255)
-  message    String @db.VarChar(255)
-  sender     String @db.VarChar(255)
-  operator   String @db.VarChar(255)
-  country    String @db.VarChar(255)
-  currency   String @db.VarChar(255)
-}
-
-model znote_paypal {
-  id     Int    @id @default(autoincrement())
-  txn_id String @db.VarChar(30)
-  email  String @db.VarChar(255)
-  accid  Int
-  price  Int
-  points Int
-}
-
-model znote_player_reports {
-  id                 Int    @id @default(autoincrement())
-  name               String @db.VarChar(50)
-  posx               Int
-  posy               Int
-  posz               Int
-  report_description String @db.VarChar(255)
-  date               Int
-  status             Int    @default(0) @db.TinyInt
-}
-
-model znote_players {
-  id        Int    @id @default(autoincrement())
-  player_id Int
-  created   Int
-  hide_char Int    @db.TinyInt
-  comment   String @db.VarChar(255)
-}
-
-model znote_shop {
-  id          Int    @id @default(autoincrement())
-  type        Int
-  itemid      Int?
-  count       Int    @default(1)
-  description String @db.VarChar(255)
-  points      Int    @default(10)
-}
-
-model znote_shop_logs {
-  id         Int @id @default(autoincrement())
-  account_id Int
-  player_id  Int
-  type       Int
-  itemid     Int
-  count      Int
-  points     Int
-  time       Int
-}
-
-model znote_shop_orders {
-  id         Int @id @default(autoincrement())
-  account_id Int
-  type       Int
-  itemid     Int
-  count      Int
-  time       Int @default(0)
-}
-
-model znote_tickets {
-  id       Int    @id @default(autoincrement())
-  owner    Int
-  username String @db.VarChar(32)
-  subject  String @db.Text
-  message  String @db.Text
-  ip       BigInt
-  creation Int
-  status   String @db.VarChar(20)
-}
-
-model znote_tickets_replies {
-  id       Int    @id @default(autoincrement())
-  tid      Int
-  username String @db.VarChar(32)
-  message  String @db.Text
-  created  Int
-}
-
-model znote_visitors {
-  id    Int @id @default(autoincrement())
-  ip    Int
-  value Int
-}
-
-model znote_visitors_details {
-  id         Int @id @default(autoincrement())
-  ip         Int
-  time       Int
-  type       Int @db.TinyInt
-  account_id Int
 }
