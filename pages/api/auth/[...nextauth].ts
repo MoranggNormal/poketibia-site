@@ -35,11 +35,6 @@ export default NextAuth({
               name: `${user.name}#${uid(4)}`,
               email: `${user.email}`,
               password: `${sha1(password)}`,
-              players: {
-                create: {
-                  name: "Eulrr Te",
-                },
-              },
             },
           });
         } catch (error) {
